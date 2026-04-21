@@ -20,6 +20,9 @@ import java.util.List;
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
 
+    @Value("${jwt.secret}")
+    private String secret;
+
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/register",
             "/api/auth/login",
@@ -46,8 +49,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         try {
             String token = authHeader.substring(7);
-            String SECRET = "THE_SECRET_KEY_THE_SECRET_KEY_THE_SECRET_KEY_THE_SECRET_KEY";
-            Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+            Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
                     .parseClaimsJws(token).getBody();
 
@@ -66,5 +68,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     }
 
     @Override
-    public int getOrder() { return -1; }
+    public int getOrder() {
+        return -1;
+    }
 }
