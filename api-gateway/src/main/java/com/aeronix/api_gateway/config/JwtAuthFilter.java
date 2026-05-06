@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
@@ -23,23 +24,35 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     @Value("${jwt.secret}")
     private String secret;
 
-    private static final List<String> PUBLIC_PATHS = List.of(
+    private static final List<String> PUBLIC_PREFIXES = List.of(
             "/api/auth/register",
             "/api/auth/login",
             "/api/auth/refresh",
             "/api/flights/search",
             "/api/flights/round-trip",
+            "/api/bookings/pnr",
+            "/api/airlines/search",
+            "/api/airlines/iata/",
+            "/api/airports/search",
+            "/api/airports/iata/",
+            "/api/airports/city/",
+            "/api/airports/country/"
+    );
+
+    private static final Set<String> PUBLIC_EXACT = Set.of(
             "/api/airlines",
-            "/api/airports",
-            "/api/bookings/pnr"
+            "/api/airports"
     );
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
+        String method = exchange.getRequest().getMethod().name();
 
-        boolean isPublic = PUBLIC_PATHS.stream().anyMatch(path::startsWith);
-        if (isPublic) return chain.filter(exchange);
+        boolean isPublicExact = "GET".equals(method) && PUBLIC_EXACT.contains(path);
+        boolean isPublicPrefix = PUBLIC_PREFIXES.stream().anyMatch(path::startsWith);
+
+        if (isPublicExact || isPublicPrefix) return chain.filter(exchange);
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
