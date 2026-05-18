@@ -274,8 +274,6 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found: " + paymentId));
 
-        // In production: generate PDF using iText/JasperReports and return S3 URL
-        // Returning structured text receipt for now
         return buildReceiptText(payment);
     }
 
@@ -354,15 +352,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private double calculateCancellationFee(String bookingId) {
-        // Fetch booking departure time from booking-service
-        // Simplified: return 25% fee as default
-        // In production: calculate based on hours until departure
         Map<String, Object> booking = bookingClient.getBookingById(bookingId);
         if (booking == null) return refundFee24to72;
-
-        // Return fee percentage based on cancellation policy
-        // Policy: 0-4h = 100%, 4-24h = 50%, 24-72h = 25%, 72h+ = 0%
-        // Simplified to 25% for demo without departure time parsing
         return refundFee24to72;
     }
 

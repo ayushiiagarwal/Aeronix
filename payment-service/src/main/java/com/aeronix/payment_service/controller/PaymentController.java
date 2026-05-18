@@ -6,6 +6,7 @@ import com.aeronix.payment_service.service.PaymentService;
 import com.aeronix.payment_service.service.PaymentServiceImpl;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
