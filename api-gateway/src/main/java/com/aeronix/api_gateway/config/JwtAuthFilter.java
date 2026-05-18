@@ -8,6 +8,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -36,7 +37,17 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/api/airports/search",
             "/api/airports/iata/",
             "/api/airports/city/",
-            "/api/airports/country/"
+            "/api/airports/country/",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/auth-service/v3/api-docs",
+            "/flight-service/v3/api-docs",
+            "/seat-service/v3/api-docs",
+            "/booking-service/v3/api-docs",
+            "/passenger-service/v3/api-docs",
+            "/payment-service/v3/api-docs",
+            "/notification-service/v3/api-docs",
+            "/airline-service/v3/api-docs"
     );
 
     private static final Set<String> PUBLIC_EXACT = Set.of(
@@ -48,6 +59,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
         String method = exchange.getRequest().getMethod().name();
+
+        if(HttpMethod.OPTIONS.matches(method)) return chain.filter(exchange);
 
         boolean isPublicExact = "GET".equals(method) && PUBLIC_EXACT.contains(path);
         boolean isPublicPrefix = PUBLIC_PREFIXES.stream().anyMatch(path::startsWith);
