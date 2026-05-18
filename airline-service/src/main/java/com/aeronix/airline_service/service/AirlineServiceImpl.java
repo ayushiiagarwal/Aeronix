@@ -25,7 +25,7 @@ public class AirlineServiceImpl implements AirlineService {
     private final AirportRepository airportRepository;
     private final RestTemplate restTemplate;
 
-    @Value("${flight.service.url}")
+    @Value("${flight.service.url:http://localhost:8086}")
     private String flightServiceUrl;
 
     // ── Airline CRUD ─────────────────────────────────────────

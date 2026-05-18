@@ -3,6 +3,7 @@ package com.aeronix.airline_service.controller;
 import com.aeronix.airline_service.dto.*;
 import com.aeronix.airline_service.entity.*;
 import com.aeronix.airline_service.service.AirlineService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
 public class AirlineController {
@@ -150,7 +152,6 @@ public class AirlineController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Autocomplete — powers the flight search form
     @GetMapping("/api/airports/search")
     public ResponseEntity<List<AirportSearchResponse>> searchAirports(
             @RequestParam String query) {
