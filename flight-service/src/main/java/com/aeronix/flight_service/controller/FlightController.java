@@ -3,6 +3,7 @@ package com.aeronix.flight_service.controller;
 import com.aeronix.flight_service.dto.*;
 import com.aeronix.flight_service.entity.Flight;
 import com.aeronix.flight_service.service.FlightService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/flights")
 @RequiredArgsConstructor

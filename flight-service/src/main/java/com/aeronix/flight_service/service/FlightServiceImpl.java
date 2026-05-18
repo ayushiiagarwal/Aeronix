@@ -1,6 +1,8 @@
 package com.aeronix.flight_service.service;
 
 import com.aeronix.flight_service.dto.*;
+import org.springframework.data.redis.core.RedisTemplate;
+import java.time.Duration;
 import com.aeronix.flight_service.entity.Flight;
 import com.aeronix.flight_service.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
 public class FlightServiceImpl implements FlightService {
 
     private final FlightRepository flightRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String FLIGHT_CACHE_PREFIX = "flight:";
+    private static final long FLIGHT_TTL_SECONDS = 300;
 
     @Override
     @Transactional
@@ -51,8 +56,18 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Optional<Flight> getFlightById(Integer flightId) {
-        return flightRepository.findById(flightId);
+        String key = FLIGHT_CACHE_PREFIX + flightId;
+        try {
+            Flight cached = (Flight) redisTemplate.opsForValue().get(key);
+            if (cached != null) return Optional.of(cached);
+        } catch (Exception ignored) {}
+        Optional<Flight> result = flightRepository.findById(flightId);
+        result.ifPresent(f -> {
+            try { redisTemplate.opsForValue().set(key, f, Duration.ofSeconds(FLIGHT_TTL_SECONDS)); } catch (Exception ignored) {}
+        });
+        return result;
     }
 
     @Override
@@ -62,15 +77,16 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public List<Flight> searchFlights(FlightSearchRequest request) {
-        LocalDateTime startOfDay = request.getDepartureDate().atStartOfDay();
-        LocalDateTime startOfNextDay = startOfDay.plusDays(1);
-        List<Flight> results = flightRepository.findAvailableFlights(
-                request.getOrigin().toUpperCase(),
-                request.getDestination().toUpperCase(),
-                startOfDay,
-                startOfNextDay,
-                request.getPassengers()
-        );
+        List<Flight> results = flightRepository
+                .findByOriginAirportCodeAndDestinationAirportCodeAndAvailableSeatsGreaterThanEqual(
+                        request.getOrigin().toUpperCase(),
+                        request.getDestination().toUpperCase(),
+                        request.getPassengers()
+                );
+
+        if (request.getDepartureDate() != null && request.getDepartureDate().isBefore(LocalDate.now())) {
+            return Collections.emptyList();
+        }
 
         // Apply filters
         if (request.getMinPrice() != null) {
@@ -162,7 +178,6 @@ public class FlightServiceImpl implements FlightService {
                 .orElseThrow(() -> new RuntimeException("Flight not found: " + flightId));
         flight.setStatus(Flight.FlightStatus.valueOf(req.getStatus().toUpperCase()));
         flightRepository.save(flight);
-        // Notification trigger happens via booking-service calling notification-service
     }
 
     @Override

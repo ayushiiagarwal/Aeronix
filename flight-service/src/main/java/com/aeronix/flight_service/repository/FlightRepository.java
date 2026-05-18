@@ -16,11 +16,6 @@ public interface FlightRepository extends JpaRepository<Flight, Integer> {
 
     Optional<Flight> findByFlightNumber(String flightNumber);
 
-    /**
-     * Finds available flights for a given route and date.
-     * Uses >= start-of-day and < start-of-next-day to match the departure date
-     * without CAST, which is not portable JPQL.
-     */
     @Query("SELECT f FROM Flight f WHERE f.originAirportCode = :origin " +
             "AND f.destinationAirportCode = :dest " +
             "AND f.departureTime >= :startOfDay " +
@@ -33,6 +28,9 @@ public interface FlightRepository extends JpaRepository<Flight, Integer> {
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("startOfNextDay") LocalDateTime startOfNextDay,
             @Param("passengers") int passengers);
+
+    List<Flight> findByOriginAirportCodeAndDestinationAirportCodeAndAvailableSeatsGreaterThanEqual(
+            String origin, String destination, int seats);
 
     List<Flight> findByAirlineId(Integer airlineId);
 
