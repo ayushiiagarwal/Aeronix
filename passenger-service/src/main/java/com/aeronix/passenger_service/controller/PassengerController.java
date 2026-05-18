@@ -3,6 +3,7 @@ package com.aeronix.passenger_service.controller;
 import com.aeronix.passenger_service.dto.*;
 import com.aeronix.passenger_service.entity.Passenger;
 import com.aeronix.passenger_service.service.PassengerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/passengers")
 @RequiredArgsConstructor
