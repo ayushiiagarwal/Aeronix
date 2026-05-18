@@ -334,11 +334,17 @@ public class BookingServiceImpl implements BookingService {
             log.warn("Could not fetch flight details for notification: {}", e.getMessage());
         }
 
+        String passengerName = "Passenger";
+        String seatNumber    = booking.getSeatNumbers() != null ? booking.getSeatNumbers() : "N/A";
+        Double totalFare     = booking.getTotalFare();
+
         notificationClient.sendBookingConfirmation(
                 booking.getUserId(), bookingId,
                 booking.getPnrCode(), booking.getContactEmail(),
                 booking.getContactPhone(),
-                flightNumber, origin, destination, departureTime);
+                passengerName,
+                flightNumber, origin, destination, departureTime,
+                seatNumber, totalFare);
 
         return booking;
     }

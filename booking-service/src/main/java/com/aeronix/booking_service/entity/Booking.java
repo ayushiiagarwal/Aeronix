@@ -57,6 +57,7 @@ public class Booking {
     private Double luggageCharge = 0.0;
 
     private String seatClass;
+    private String seatNumbers;
 
     @Column(nullable = false)
     private String contactEmail;
@@ -75,7 +76,6 @@ public class Booking {
     private String paymentId;
     private String cancellationReason;
 
-    // Web check-in
     @Builder.Default
     private boolean checkedIn = false;
     private LocalDateTime checkedInAt;

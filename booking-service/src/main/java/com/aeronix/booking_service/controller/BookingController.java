@@ -3,6 +3,7 @@ package com.aeronix.booking_service.controller;
 import com.aeronix.booking_service.dto.*;
 import com.aeronix.booking_service.entity.Booking;
 import com.aeronix.booking_service.service.BookingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/bookings")
 @RequiredArgsConstructor
