@@ -3,6 +3,7 @@ package com.aeronix.notification_service.controller;
 import com.aeronix.notification_service.dto.*;
 import com.aeronix.notification_service.entity.Notification;
 import com.aeronix.notification_service.service.NotificationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor

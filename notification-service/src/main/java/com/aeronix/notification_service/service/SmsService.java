@@ -32,7 +32,6 @@ public class SmsService {
         }
 
         try {
-            // In production — use Twilio SDK:
              Twilio.init(twilioAccountSid, twilioAuthToken);
              Message.creator(new PhoneNumber(to),
                              new PhoneNumber(twilioFromNumber),

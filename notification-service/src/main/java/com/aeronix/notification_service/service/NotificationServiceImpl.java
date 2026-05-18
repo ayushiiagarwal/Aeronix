@@ -63,7 +63,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         notification = notificationRepository.save(notification);
 
-        // Dispatch to channels asynchronously
         dispatchToChannels(notification, channel);
 
         return notification;
