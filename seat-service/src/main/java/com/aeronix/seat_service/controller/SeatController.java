@@ -3,6 +3,7 @@ package com.aeronix.seat_service.controller;
 import com.aeronix.seat_service.dto.*;
 import com.aeronix.seat_service.entity.Seat;
 import com.aeronix.seat_service.service.SeatService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/seats")
 @RequiredArgsConstructor
@@ -133,8 +135,3 @@ public class SeatController {
         return ResponseEntity.ok(Map.of("message", "User seat holds released"));
     }
 }
-
-/*
-"accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQUlSTElORV9TVEFGRiIsImZ1bGxOYW1lIjoiQWVyb25peF9TdGFmZiIsImVtYWlsIjoiYWVyb25peHN0YWZmQGdtYWlsLmNvbSIsInN1YiI6IjEiLCJpYXQiOjE3NzY4NTA1NDksImV4cCI6MTc3NjkzNjk0OX0.qi-nUwnH0QIRQ7CcnAs0CUwYbDf57fq5JdbzKm9ZkWw",
-    "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzc2ODUwNTQ5LCJleHAiOjE3Nzc0NTUzNDl9.F34kbdCh3j1sYN9KLB5WzHf6U8BIqZr3mxVD0xbTOW0",
- */

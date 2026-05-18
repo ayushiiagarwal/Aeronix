@@ -6,6 +6,8 @@ import com.aeronix.seat_service.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import java.time.Duration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,9 @@ import java.util.stream.Collectors;
 public class SeatServiceImpl implements SeatService {
 
     private final SeatRepository seatRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String SEAT_MAP_PREFIX = "seatmap:";
+    private static final long SEAT_MAP_TTL_SECONDS = 60;
 
     @Value("${seat.hold.expiry.minutes:15}")
     private int holdExpiryMinutes;
@@ -175,8 +180,16 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Seat> getAllSeatsByFlight(Integer flightId) {
-        return seatRepository.findByFlightId(flightId);
+        String key = SEAT_MAP_PREFIX + flightId;
+        try {
+            List<Seat> cached = (List<Seat>) redisTemplate.opsForValue().get(key);
+            if (cached != null) return cached;
+        } catch (Exception ignored) {}
+        List<Seat> seats = seatRepository.findByFlightId(flightId);
+        try { redisTemplate.opsForValue().set(key, seats, Duration.ofSeconds(SEAT_MAP_TTL_SECONDS)); } catch (Exception ignored) {}
+        return seats;
     }
 
     @Override
