@@ -4,6 +4,7 @@ import com.aeronix.notification_service.dto.*;
 import com.aeronix.notification_service.entity.Notification;
 import com.aeronix.notification_service.service.NotificationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class NotificationController {
 
     @PostMapping("/send")
     public ResponseEntity<Notification> send(
-            @RequestBody SendNotificationRequest request) {
+            @Valid @RequestBody SendNotificationRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(notificationService.send(request));
     }
