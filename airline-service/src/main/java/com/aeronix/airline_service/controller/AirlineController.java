@@ -79,7 +79,7 @@ public class AirlineController {
     @PutMapping("/api/airlines/{airlineId}")
     public ResponseEntity<Airline> updateAirline(
             @PathVariable Integer airlineId,
-            @RequestBody AirlineRequest request,
+            @Valid @RequestBody AirlineRequest request,
             @RequestHeader("X-User-Role") String role) {
         if (!role.equals("ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -192,7 +192,7 @@ public class AirlineController {
     @PutMapping("/api/airports/{airportId}")
     public ResponseEntity<Airport> updateAirport(
             @PathVariable Integer airportId,
-            @RequestBody AirportRequest request,
+            @Valid @RequestBody AirportRequest request,
             @RequestHeader("X-User-Role") String role) {
         if (!role.equals("ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
