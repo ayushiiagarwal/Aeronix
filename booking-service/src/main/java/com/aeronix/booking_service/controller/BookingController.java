@@ -74,7 +74,7 @@ public class BookingController {
 
     @PostMapping("/checkin")
     public ResponseEntity<Booking> webCheckIn(
-            @RequestBody CheckInRequest request,
+            @Valid @RequestBody CheckInRequest request,
             @RequestHeader("X-User-Id") Integer userId) {
         return ResponseEntity.ok(bookingService.webCheckIn(request, userId));
     }
@@ -82,7 +82,7 @@ public class BookingController {
     @PostMapping("/{bookingId}/addons")
     public ResponseEntity<Booking> addAddOn(
             @PathVariable String bookingId,
-            @RequestBody AddOnRequest request,
+            @Valid @RequestBody AddOnRequest request,
             @RequestHeader("X-User-Id") Integer userId) {
         return ResponseEntity.ok(bookingService.addAddOn(bookingId, request));
     }
